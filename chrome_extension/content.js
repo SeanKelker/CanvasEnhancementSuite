@@ -1,5 +1,9 @@
 //Add header to camino
 let main_window = document.body;
+let font = document.createElement('link');
+font.href = "https://use.typekit.net/fmp3diy.css";
+font.rel = "stylesheet";
+document.head.appendChild(font);
 
 function createHeader () {
     let header = document.createElement('ul');
