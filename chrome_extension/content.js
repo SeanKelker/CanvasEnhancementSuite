@@ -51,4 +51,31 @@ function createHeader () {
     return header;
 }
 
+function tagModuleItem(event) {
+    let item = event.target.parentElement;
+    let link = item.children[0].href;
+    let name = item.children[0].ariaLabel;
+    let type = item.children[1].title;
+    
+    console.log(name + ", " + type + ", " + link);
+
+}
+
+//Will add a tag button to module item cards
+async function addTagsModule() {
+    let modItems = await document.getElementsByClassName('ig-row');
+    
+    for (var i = 0; i < modItems.length; i++) {
+        if(!modItems[i].parentElement.classList.contains('context_module_sub_header')) {
+            let tagButton = document.createElement('input');
+            tagButton.type = 'checkbox';
+            tagButton.value = 'Tag';
+            tagButton.onchange = tagModuleItem;
+            console.log(modItems[i]);
+            modItems[i].appendChild(tagButton);
+        }
+    }
+}
+
 main_window.prepend(createHeader());
+addTagsModule();
