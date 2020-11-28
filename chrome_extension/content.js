@@ -7,7 +7,7 @@ function createHeader(courses) {
     header.setAttribute('id', 'ces-header');
     let title = '<li class="bar-item" id="ces-header-title">CES</li>';
     header.insertAdjacentHTML('beforeend', title);
-    
+
     for (let i = 0; i < courses.length; i++) {
         const c = courses[i];
 
@@ -21,8 +21,9 @@ function createHeader(courses) {
 
         let dropContent = document.createElement('div');
         dropContent.className = 'dropdown-content';
-
-        let contentStr = '<a href="#">Assignments</a><a href="#">Announcements</a>'
+        let courseStr = '<a href="/courses/' + c['id'] + '">Assignments</a>'
+        let announcementStr = '<a href="/courses/' + c['id'] + '/announcements">Announcements</a>'
+        let contentStr = courseStr + announcementStr
         dropContent.insertAdjacentHTML('beforeend', contentStr);
 
         course.appendChild(dropbtn);
