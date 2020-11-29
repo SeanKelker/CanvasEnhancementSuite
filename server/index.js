@@ -25,9 +25,13 @@ app.get('/courses:user', function(req, res){
     }
 });
 
-app.post('/items/add:user', function(res, res) {
+app.post('/items/add:user', function(req, res) {
     console.log(req.body);
 });
+
+app.delete('/items/delete:id', function(req, res) {
+
+})
 
 app.listen(3000, () => {
     console.log('Listening at http://localhost:3000');
