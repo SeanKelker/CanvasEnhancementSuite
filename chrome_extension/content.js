@@ -33,6 +33,42 @@ function createHeader(courses) {
     return header;
 }
 
+function tagModuleItem(event) {
+    let item = event.target.parentElement;
+    let link = item.children[0].href;
+    let name = item.children[0].ariaLabel;
+    let type = item.children[1].title;
+    
+    console.log(name + ", " + type + ", " + link);
+}
+function tagAssignment(event) {
+    let parent = event.target.parentElement;
+    let type = 'Assignment';
+    let link = parent.children[0].children[1].children[0].href;
+    let name = parent.children[0].children[1].children[0].text;
+
+    console.log(name + ", " + type + ", " + link);
+}
+//Will add a tag button to module item cards
+async function addTags() {
+    let modItems = await document.getElementsByClassName('ig-row');
+    console.log(modItems.length)
+
+    for (var i = 0; i < modItems.length; i++) {
+        console.log('Test');
+        if(!modItems[i].parentElement.classList.contains('context_module_sub_header')) {
+            let tagButton = document.createElement('input');
+            tagButton.type = 'checkbox';
+            tagButton.value = 'Tag';
+            if (modItems[i].parentElement.classList.contains('context_module_item')) {
+                tagButton.onchange = tagModuleItem;
+            } else if (modItems[i].parentElement.classList.contains('assignment')) {
+                tagButton.onchange = tagAssignment;
+            }
+            modItems[i].appendChild(tagButton);
+        }
+    }
+}
 fetch('https://camino.instructure.com/api/v1/courses')
     .then(result => result.text())
     .then(result => {
@@ -45,3 +81,7 @@ fetch('https://camino.instructure.com/api/v1/courses')
         document.head.appendChild(font);
         main_window.prepend(createHeader(courses));
     });
+
+window.addEventListener("load", function(event) {
+    addTags();
+});
