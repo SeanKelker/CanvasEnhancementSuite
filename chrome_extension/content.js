@@ -1,3 +1,8 @@
+//const { userInfo } = require("os");
+var userName = '';
+var userId = '';
+const serverUrl = 'localhost:3000/';
+
 function createHeader(courses) {
     courses = courses
         .filter(c => c.course_code)
@@ -69,17 +74,23 @@ async function addTags() {
         }
     }
 }
-fetch('https://camino.instructure.com/api/v1/courses')
+fetch('https://camino.instructure.com/api/v1/users/self')
     .then(result => result.text())
     .then(result => {
-        courses = JSON.parse(result.substr(9, result.length));
-        console.log(courses)
+        let userInfo = JSON.parse(result.substr(9, result.length));
+        console.log(userInfo);
+        userId = userInfo.id;
+        userName = userInfo.short_name;
         let main_window = document.body;
         let font = document.createElement('link');
         font.href = "https://use.typekit.net/fmp3diy.css";
         font.rel = "stylesheet";
         document.head.appendChild(font);
-        main_window.prepend(createHeader(courses));
+        //main_window.prepend(createHeader(courses));
+    })
+    .then(() => {
+        fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
+        .then(result => console.log(result))
     });
 
 window.addEventListener("load", function(event) {
