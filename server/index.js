@@ -5,8 +5,14 @@ const bodyParser = require("body-parser");
 var express = require('express');
 var app = express();
 
-const uri = process.env.URI;
+const username = "zakgraber";
+const password = "thYIMXWbomUy8y7G";
+const dbname = "canvasDocs";
+
+// const uri = process.env.URI;
+const uri = "mongodb+srv://" + username + ":" + password + "@canvasenhancementsuite.amiv0.mongodb.net/" + dbname + "?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
+// const client = new MongoClient(uri, { useNewUrlParser: true });
 
 app.use(bodyParser.json());
 
@@ -166,6 +172,24 @@ app.delete('/items/delete', async function(req, res) {
     }
 });
 
+// async function run() {
+//   try {
+//     await client.connect();
+//     const database = client.db('test');
+//     const collection = database.collection('test_ids');
+//     // Query for a movie that has the title 'Back to the Future'
+//     const query = { id: 5 };
+//     const movie = await collection.findOne(query);
+//     console.log(movie);
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     await client.close();
+//   }
+// }
+
+// run().catch(console.dir);
+
 app.listen(3000, () => {
     console.log('Listening at http://localhost:3000');
 });
+
