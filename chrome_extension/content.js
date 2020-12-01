@@ -2,6 +2,7 @@
 var userName = '';
 var userId = '';
 const serverUrl = 'localhost:3000/';
+let types = ['assignments', 'announcements', 'pages'];
 
 function createHeader(courses) {
     let header = document.createElement('ul');
@@ -20,15 +21,51 @@ function createHeader(courses) {
         dropbtn.innerHTML = c.course_name;
         dropbtn.href = "javascript:void(0)";
 
-        let dropContent = document.createElement('div');
+        let dropContent = document.createElement('ul');
         dropContent.className = 'dropdown-content';
-        let courseStr = '<a>Assignments</a>'
-        let announcementStr = '<a>Announcements</a>'
-        let contentStr = courseStr + announcementStr
-        dropContent.insertAdjacentHTML('beforeend', contentStr);
+
+        let assignmentsElem = document.createElement('li'); 
+        let announcementsElem = document.createElement('li'); 
+        let pagesElem = document.createElement('li'); 
+
+        let assignmentBtn = document.createElement('a');
+        let announcementsBtn = document.createElement('a');
+        let pagesBtn = document.createElement('a');
+
+        let assignmentsList = document.createElement('ul');
+        let announcementsList = document.createElement('ul');
+        let pagesList = document.createElement('ul');
+        
+        for (let j = 0; j < 3; j++) {
+            let type = types[j];
+            for (let k = 0; k < c[type].length; k++) {
+                let itemStr = `<li><a href="${c[type][k].link}">${c[type][k].name}</a></li>`;
+                switch (type) {
+                    case 'assignments':
+                        assignmentsList.insertAdjacentElement('afterbegin', itemStr);
+                        break;
+                    case 'announcements':
+                        announcementsList.insertAdjacentElement('afterbegin', itemStr);
+                        break;
+                    case 'pages':
+                        pagesList.insertAdjacentElement('afterbegin', itemStr);
+                        break;
+                }
+            }
+        }
+
+        assignmentsElem.appendChild(assignmentBtn);
+        assignmentsElem.appendChild(assignmentsList);
+        announcementsElem.appendChild(announcementsBtn);
+        announcementsElem.appendChild(announcementsList);
+        pagesElem.appendChild(pagesBtn);
+        pagesElem.appendChild(pagesList);
 
         course.appendChild(dropbtn);
-        course.appendChild(dropContent);
+        course.appendChild(assignmentsElem);
+        course.appendChild(announcementsElem);
+        course.appendChild(pagesElem);
+
         header.appendChild(course);
     }
     return header;
