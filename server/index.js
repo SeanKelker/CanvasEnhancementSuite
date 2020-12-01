@@ -42,10 +42,78 @@ app.post('/items/add', async function(req, res) {
         const query = { user_name: userName, user_id: userId };
         const student = await collection.findOne(query);
         console.log(student);
+
+        //Student document exists
         if (student) {
-            //Add item into tracked important items
+            //Check if course has been tracked already
+            let cond = (course) => course.course_id === req.body.courseId;
+            let index = student.courses.findIndex(cond);
+            if (index === -1) {
+                //Add the course with the tracked assignment
+                let course = {
+                    course_name: req.body.courseName,
+                    course_id: req.body.courseId,
+                    assignments: [],
+                    announcements: [],
+                    pages: []
+                }
+    
+                course[req.body.type].push({
+                    name: req.body.itemName,
+                    link: req.body.itemLink
+                });
+
+                let set = {
+                    courses: course
+                };
+
+                collection.updateOne({
+                    user_name: userName,
+                    user_id: userId
+                }, {
+                    $push: set
+                }, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            } else {
+                //push the item onto the existing assignment type
+                let set = {};
+                set['courses.' + index + '.' + req.body.type] = {name: req.body.itemName, link: req.body.itemLink};
+
+                collection.updateOne({
+                    user_name: userName,
+                    user_id: userId
+                }, {
+                    $push: set
+                }, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
         } else {
+            //create the course the tracked item will go into
+            let course = {
+                course_name: req.body.courseName,
+                course_id: req.body.courseId,
+                assignments: [],
+                announcements: [],
+                pages: []
+            }
+
+            course[req.body.type].push({
+                name: req.body.itemName,
+                link: req.body.itemLink
+            });
+
             //Create a student document
+            collection.insertOne({
+                user_name: userName,
+                user_id: userId,
+                courses: [course]
+            })
         }
     } finally {
         // Ensures that the client will close when you finish/error
@@ -54,6 +122,8 @@ app.post('/items/add', async function(req, res) {
 });
 
 app.delete('/items/delete', async function(req, res) {
+    let userName = req.query.name;
+    let userId = req.query.id;
     console.log(req.body);
     try {
         await client.connect();
@@ -65,8 +135,30 @@ app.delete('/items/delete', async function(req, res) {
         console.log(student);
         if (student) {
             //If the item is currently tracked delete it, if not then leave it
+            let cond = (course) => course.course_id === req.body.courseId;
+            let index = student.courses.findIndex(cond);
+            if (index === -1) {
+                console.log('Course to delete from does not exist');
+            } else {
+                let pull = {};
+                //Remove from item category by assignment name, since links may change
+                pull['courses.' + index + '.' + req.body.type] = {
+                    name: req.body.itemName
+                };
+
+                collection.updateOne({
+                    user_name: userName,
+                    user_id: userId
+                }, {
+                    $pull: pull
+                }, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
         } else {
-            //Create a student document
+            console.log('Student does not exist and cannot delete item');
         }
     } finally {
         // Ensures that the client will close when you finish/error
