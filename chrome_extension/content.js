@@ -92,6 +92,16 @@ function createHeader(courses) {
     return header;
 }
 
+function getCourseName() {
+    let breadcrumbs = document.getElementById('breadcrumbs');
+    return (breadcrumbs.children[0].children[1].children[0].children[0].innerHTML);
+}
+
+function getCourseId() {
+    let location = window.location.href;
+    return (location.split('/')[4]);
+}
+
 function tagModuleItem(event) {
     let item = event.target.parentElement;
     let link = item.children[0].href;
@@ -155,4 +165,5 @@ fetch('https://camino.instructure.com/api/v1/users/self')
 
 window.addEventListener("load", function(event) {
     addTags();
+    getCourseId();
 });
