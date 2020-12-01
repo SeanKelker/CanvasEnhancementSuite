@@ -4,10 +4,6 @@ var userId = '';
 const serverUrl = 'localhost:3000/';
 
 function createHeader(courses) {
-    courses = courses
-        .filter(c => c.course_code)
-        .filter(c => new Date(c['end_at']) >= Date.now())
-
     let header = document.createElement('ul');
     header.setAttribute('id', 'ces-header');
     let title = '<li class="bar-item" id="ces-header-title">CES</li>';
@@ -21,13 +17,13 @@ function createHeader(courses) {
 
         let dropbtn = document.createElement('a');
         dropbtn.className = "dropbtn";
-        dropbtn.innerHTML = c['course_code'];
+        dropbtn.innerHTML = c.course_name;
         dropbtn.href = "javascript:void(0)";
 
         let dropContent = document.createElement('div');
         dropContent.className = 'dropdown-content';
-        let courseStr = '<a href="/courses/' + c['id'] + '">Assignments</a>'
-        let announcementStr = '<a href="/courses/' + c['id'] + '/announcements">Announcements</a>'
+        let courseStr = '<a>Assignments</a>'
+        let announcementStr = '<a>Announcements</a>'
         let contentStr = courseStr + announcementStr
         dropContent.insertAdjacentHTML('beforeend', contentStr);
 
@@ -74,6 +70,7 @@ async function addTags() {
         }
     }
 }
+
 fetch('https://camino.instructure.com/api/v1/users/self')
     .then(result => result.text())
     .then(result => {
@@ -81,16 +78,21 @@ fetch('https://camino.instructure.com/api/v1/users/self')
         console.log(userInfo);
         userId = userInfo.id;
         userName = userInfo.short_name;
-        let main_window = document.body;
+        
         let font = document.createElement('link');
         font.href = "https://use.typekit.net/fmp3diy.css";
         font.rel = "stylesheet";
         document.head.appendChild(font);
-        //main_window.prepend(createHeader(courses));
+        
     })
     .then(() => {
         fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
-        .then(result => console.log(result))
+        .then(result => result.json())
+        .then((courses) => {
+            console.log(courses);
+            let main_window = document.body;
+            main_window.prepend(createHeader(courses));
+        })
     });
 
 window.addEventListener("load", function(event) {
