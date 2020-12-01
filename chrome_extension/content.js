@@ -3,6 +3,19 @@ var userName = '';
 var userId = '';
 const serverUrl = 'localhost:3000/';
 let types = ['assignments', 'announcements', 'pages'];
+let courses = [
+    {
+        course_name: 'COEN 174',
+        assignments: [
+            {name: "Andrew Hill HS Presentations", link: 'https://www.google.com'},
+            {name: "Assignment 3", link: 'https://www.google.com'},
+        ],
+        announcements: [
+            {name: "Very important!", link: 'https://www.google.com'},
+        ],
+        pages: []
+    }
+]
 
 function createHeader(courses) {
     let header = document.createElement('ul');
@@ -25,12 +38,18 @@ function createHeader(courses) {
         dropContent.className = 'dropdown-content';
 
         let assignmentsElem = document.createElement('li'); 
+        assignmentsElem.className = 'dropdown-category';
         let announcementsElem = document.createElement('li'); 
+        announcementsElem.className = 'dropdown-category';
         let pagesElem = document.createElement('li'); 
+        pagesElem.className = 'dropdown-category';
 
         let assignmentBtn = document.createElement('a');
+        assignmentBtn.innerHTML = "Assignments";
         let announcementsBtn = document.createElement('a');
+        announcementsBtn.innerHTML = "Announcements";
         let pagesBtn = document.createElement('a');
+        pagesBtn.innerHTML = "Pages";
 
         let assignmentsList = document.createElement('ul');
         let announcementsList = document.createElement('ul');
@@ -40,15 +59,16 @@ function createHeader(courses) {
             let type = types[j];
             for (let k = 0; k < c[type].length; k++) {
                 let itemStr = `<li><a href="${c[type][k].link}">${c[type][k].name}</a></li>`;
+                console.log(itemStr)
                 switch (type) {
                     case 'assignments':
-                        assignmentsList.insertAdjacentElement('afterbegin', itemStr);
+                        assignmentsList.insertAdjacentHTML('afterbegin', itemStr);
                         break;
                     case 'announcements':
-                        announcementsList.insertAdjacentElement('afterbegin', itemStr);
+                        announcementsList.insertAdjacentHTML('afterbegin', itemStr);
                         break;
                     case 'pages':
-                        pagesList.insertAdjacentElement('afterbegin', itemStr);
+                        pagesList.insertAdjacentHTML('afterbegin', itemStr);
                         break;
                 }
             }
@@ -62,9 +82,10 @@ function createHeader(courses) {
         pagesElem.appendChild(pagesList);
 
         course.appendChild(dropbtn);
-        course.appendChild(assignmentsElem);
-        course.appendChild(announcementsElem);
-        course.appendChild(pagesElem);
+        dropContent.appendChild(assignmentsElem);
+        dropContent.appendChild(announcementsElem);
+        dropContent.appendChild(pagesElem);
+        course.appendChild(dropContent);
 
         header.appendChild(course);
     }
@@ -123,13 +144,13 @@ fetch('https://camino.instructure.com/api/v1/users/self')
         
     })
     .then(() => {
-        fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
+        /*fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
         .then(result => result.json())
-        .then((courses) => {
+        .then((courses) => { */
             console.log(courses);
             let main_window = document.body;
             main_window.prepend(createHeader(courses));
-        })
+        //})
     });
 
 window.addEventListener("load", function(event) {
