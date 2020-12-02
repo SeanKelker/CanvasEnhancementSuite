@@ -92,9 +92,14 @@ function createHeader(courses) {
     return header;
 }
 
+//
 function getCourseName() {
     let breadcrumbs = document.getElementById('breadcrumbs');
-    return (breadcrumbs.children[0].children[1].children[0].children[0].innerHTML);
+    let name = breadcrumbs.children[0].children[1].children[0].children[0].innerHTML;
+    if(name)
+        return name;
+    else 
+        return '';
 }
 
 function getCourseId() {
@@ -102,21 +107,131 @@ function getCourseId() {
     return (location.split('/')[4]);
 }
 
+function typeToTypes(type) {
+    switch(type){
+        case 'Assignment':
+            return 'assignments';
+            break;
+        case 'Page':
+            return 'pages'
+            break;
+        case 'Announcement':
+            return 'announcements';
+            break;
+        default:
+            return '';
+            break;
+    }
+}
+
 function tagModuleItem(event) {
     let item = event.target.parentElement;
     let link = item.children[0].href;
     let name = item.children[0].ariaLabel;
     let type = item.children[1].title;
+    let courseName = getCourseName();
+    let courseId = getCourseId();
+    let body = {
+        type: type,
+        itemName: name,
+        itemLink: link,
+        courseName: courseName,
+        courseId: courseId
+    }
+
+    if(courseName){
+        console.log(name + ", " + type + ", " + link);
+        let checked = event.target.checked;
+        if (checked) {
+            fetch(serverUrl+'items/add?name=' + userName + '&id=' + userId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then((res) => res.json())
+            .then(res => {
+                if (res.success === true) {
+                    console.log('Add success')
+                } else {
+                    console.log('Add failed');
+                    event.target.checked = false;
+                }
+            });
+        } else {
+            fetch(serverUrl+'items/delete?name=' + userName + '&id=' + userId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then((res) => res.json())
+            .then(res => {
+                if (res.success === true) {
+                    console.log('Delete success')
+                } else {
+                    console.log('Delete failed');
+                    event.target.checked = true;
+                }
+            });
+        }
+    } else {
+        console.log('Could not operate on this item');
+    }
     
-    console.log(name + ", " + type + ", " + link);
 }
+
 function tagAssignment(event) {
     let parent = event.target.parentElement;
     let type = 'Assignment';
     let link = parent.children[0].children[1].children[0].href;
     let name = parent.children[0].children[1].children[0].text;
+    let courseName = getCourseName();
+    let courseId = getCourseId();
 
-    console.log(name + ", " + type + ", " + link);
+    if(courseName){
+        console.log(name + ", " + type + ", " + link);
+        let checked = event.target.checked;
+        if (checked) {
+            fetch(serverUrl+'items/add?name=' + userName + '&id=' + userId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then((res) => res.json())
+            .then(res => {
+                if (res.success === true) {
+                    console.log('Add success')
+                } else {
+                    console.log('Add failed');
+                    event.target.checked = false;
+                }
+            });
+        } else {
+            fetch(serverUrl+'items/delete?name=' + userName + '&id=' + userId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then((res) => res.json())
+            .then(res => {
+                if (res.success === true) {
+                    console.log('Delete success')
+                } else {
+                    console.log('Delete failed');
+                    event.target.checked = true;
+                }
+            });
+        }
+    } else {
+        console.log('Could not operate on this item');
+    }
 }
 //Will add a tag button to module item cards
 async function addTags() {
@@ -124,17 +239,17 @@ async function addTags() {
     console.log(modItems.length)
 
     for (var i = 0; i < modItems.length; i++) {
-        console.log('Test');
         if(!modItems[i].parentElement.classList.contains('context_module_sub_header')) {
             let tagButton = document.createElement('input');
             tagButton.type = 'checkbox';
             tagButton.value = 'Tag';
-            if (modItems[i].parentElement.classList.contains('context_module_item')) {
+            if (modItems[i].parentElement.classList.contains('context_module_item') && typeToTypes(modItems[i].children[1].title)) {
                 tagButton.onchange = tagModuleItem;
+                modItems[i].appendChild(tagButton);
             } else if (modItems[i].parentElement.classList.contains('assignment')) {
                 tagButton.onchange = tagAssignment;
+                modItems[i].appendChild(tagButton);
             }
-            modItems[i].appendChild(tagButton);
         }
     }
 }
