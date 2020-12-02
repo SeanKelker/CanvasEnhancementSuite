@@ -81,6 +81,9 @@ app.post('/items/add', async function(req, res) {
                 }, (err, result) => {
                     if (err) {
                         console.log(err);
+                        res.json({success: false})
+                    } else {
+                        res.json({success: true})
                     }
                 });
             } else {
@@ -96,6 +99,9 @@ app.post('/items/add', async function(req, res) {
                 }, (err, result) => {
                     if (err) {
                         console.log(err);
+                        res.json({success: false})
+                    } else {
+                        res.json({success: true})
                     }
                 });
             }
@@ -119,7 +125,14 @@ app.post('/items/add', async function(req, res) {
                 user_name: userName,
                 user_id: userId,
                 courses: [course]
-            })
+            }, function(err, result){
+                if (err) {
+                    console.log(err);
+                    res.json({success: false})
+                } else {
+                    res.json({success: true})
+                }
+            });
         }
     } finally {
         // Ensures that the client will close when you finish/error
@@ -160,6 +173,9 @@ app.delete('/items/delete', async function(req, res) {
                 }, (err, result) => {
                     if (err) {
                         console.log(err);
+                        res.json({success: false})
+                    } else {
+                        res.json({success: true})
                     }
                 });
             }
