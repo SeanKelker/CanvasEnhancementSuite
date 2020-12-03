@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    res.header("Access-Control-Allow-Methods", "*")
     next();
 });
 
@@ -154,10 +155,11 @@ app.delete('/items/delete', async function(req, res) {
         const database = Connection.db.db(process.env.DB_NAME);
         const collection = database.collection(process.env.COLLECTION_NAME);
         // Query for a movie that has the title 'Back to the Future'
-        const query = { user: req.params.user };
+        const query = { user_name: userName, user_id: userId };
         const student = await collection.findOne(query);
-        console.log(student);
+        //console.log(student);
         if (student) {
+            console.log(student)
             //If the item is currently tracked delete it, if not then leave it
             let cond = (course) => course.course_id === req.body.courseId;
             let index = student.courses.findIndex(cond);

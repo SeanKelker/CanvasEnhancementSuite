@@ -244,9 +244,9 @@ function tagAssignment(event) {
 async function addTags(courses) {
     let modItems = await document.getElementsByClassName('ig-row');
     console.log(modItems.length)
-    let courseName = getCourseName();
     let courseId = getCourseId();
-
+    let course = courses[courses.findIndex(c => c.course_id===courseId)];
+    console.log(course);
     for (var i = 0; i < modItems.length; i++) {
         if(!modItems[i].parentElement.classList.contains('context_module_sub_header')) {
             let tagButton = document.createElement('input');
@@ -254,9 +254,37 @@ async function addTags(courses) {
             tagButton.value = 'Tag';
             if (modItems[i].parentElement.classList.contains('context_module_item') && typeToTypes(modItems[i].children[1].title)) {
                 tagButton.onchange = tagModuleItem;
+                let link = modItems[i].children[0].href;
+                
+                var found = false;
+                if (course) {
+                    let items = course[typeToTypes(modItems[i].children[1].title)];
+                    for(var i = 0; i < items.length; i++) {
+                        if (items[i].link === link) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (found)
+                    tagButton.checked = true;
                 modItems[i].appendChild(tagButton);
             } else if (modItems[i].parentElement.classList.contains('assignment')) {
                 tagButton.onchange = tagAssignment;
+                
+                let link = modItems[i].children[0].href;
+                var found = false;
+                if (course) {
+                    let items = course['assignments'];
+                    for(var i = 0; i < items.length; i++) {
+                        if (items[i].link === link) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (found)
+                    tagButton.checked = true;
                 modItems[i].appendChild(tagButton);
             }
         }
@@ -283,11 +311,11 @@ fetch('https://camino.instructure.com/api/v1/users/self')
         .then((courses) => { 
             console.log(courses);
             let main_window = document.body;
+            addTags(courses);
             main_window.prepend(createHeader(courses));
         })
     });
 
 window.addEventListener("load", function(event) {
-    addTags();
-    getCourseId();
+    
 });
