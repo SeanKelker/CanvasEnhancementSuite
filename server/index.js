@@ -5,15 +5,6 @@ const bodyParser = require("body-parser");
 var express = require('express');
 var app = express();
 
-const username = "zakgraber";
-const password = "thYIMXWbomUy8y7G";
-const dbname = "canvasDocs";
-
-// const uri = process.env.URI;
-//const uri = "mongodb+srv://" + username + ":" + password + "@canvasenhancementsuite.amiv0.mongodb.net/" + dbname + "?retryWrites=true&w=majority";
-//const client = new MongoClient(uri, { useNewUrlParser: true });
-// const client = new MongoClient(uri, { useNewUrlParser: true });
-
 const {Connection} = require('./mongo.js');
 
 app.use(bodyParser.json());
