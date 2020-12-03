@@ -27,7 +27,6 @@
             storage.local.set({"on": on, "blocked": 0});
 
             updateOnButton();
-            updateIcon();
         });
     }
 
