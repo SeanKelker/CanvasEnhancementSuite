@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Settings</title>
+    <link href="../settings.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+<div class="banner"></div>
+
+<div class="page">
+    <div class="article">
+        <p class="title">Focus Mode Settings</p>
+        <div>
+            <p class="title1">Default blocked websites</p>
+            <ul class="list" id="defaultList">
+            </ul>
+        </div>
+        <div>
+            <p class="title1">Custom blocked websites</p>
+            <table id="customTable">
+                <tr class="head">
+                    <th class="table-checkbox">
+                    </th>
+                    <th>Website</th>
+                    <th class="table-cross">Delete</th>
+                </tr>
+            </table>
+            <div>
+                <p class="title2">Add a website</p>
+                <input id="addingInput" style="width: 100%;" type="text">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="settings.js"></script>
+</body>
+</html>

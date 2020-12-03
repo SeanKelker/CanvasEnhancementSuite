@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      button {
-        height: 30px;
-        width: 30px;
-        outline: none;
-      }
-    </style>
-  </head>
-  <body>
-    <button id="changeColor"></button>
-    <script src="popup.js"></script>
-  </body>
+<head>
+  <title>Focus Mode</title>
+  <link href="../popup.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<div class="title">Focus Mode</div>
+
+<div class="attempts">
+  <number>0</number>
+  Distraction attempts
+</div>
+
+<div class="buttons">
+  <a class="button raised" href id="onButton">
+    Activate
+  </a>
+
+  <a class="button raised" href id="optionsButton">
+    Settings
+  </a>
+</div>
+
+<script src="../popup.js"></script>
+</body>
 </html>

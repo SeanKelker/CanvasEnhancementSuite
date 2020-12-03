@@ -1,34 +1,38 @@
 {
-    "name": "Canvas Enhancement Suite",
-    "version": "1.0",
-    "description": "Improvements to the canvas application.",
-    "permissions": ["activeTab", "declarativeContent", "storage"],
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": false
-    },
-    "options_page": "options.html",
-    "page_action": {
-        "default_popup": "popup.html",
-        "default_icon": {
-            "16": "images/get_started16.png",
-            "32": "images/get_started32.png",
-            "48": "images/get_started48.png",
-            "128": "images/get_started128.png"
-        }
-    },
-    "content_scripts": [
-        {
-            "matches": ["https://camino.instructure.com/*"],
-            "js": ["content.js"],
-            "css": ["style.css"]
-        }
+  "name": "Canvas Enhancement Suite",
+  "version": "1.0",
+  "description": "Improvements to the canvas application.",
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "storage",
+    "tabs",
+    "<all_urls>",
+    "webRequest",
+    "webNavigation"
+  ],
+  "background": {
+    "scripts": [
+      "background.js"
     ],
-    "icons": {
-        "16": "images/get_started16.png",
-        "32": "images/get_started32.png",
-        "48": "images/get_started48.png",
-        "128": "images/get_started128.png"
-    },
-    "manifest_version": 2
+    "persistent": true
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "Work Mode"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://camino.instructure.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "style.css"
+      ]
+    }
+  ],
+  "manifest_version": 2
 }
