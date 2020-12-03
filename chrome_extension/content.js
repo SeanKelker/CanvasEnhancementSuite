@@ -1,4 +1,3 @@
-//const { userInfo } = require("os");
 var userName = '';
 var userId = '';
 const serverUrl = 'http://localhost:3000/';
@@ -28,6 +27,7 @@ function createHeader(courses) {
 
         let course = document.createElement('li');
         course.className = 'bar-item ces-dropdown';
+        course.id = c.course_name +'-dropdown'
 
         let dropbtn = document.createElement('a');
         dropbtn.className = "dropbtn";
@@ -151,9 +151,13 @@ function tagModuleItem(event) {
                 body: JSON.stringify(body)
             })
             .then((res) => res.json())
-            .then(res => {
+            .then(async res => {
                 if (res.success === true) {
                     console.log('Add success')
+                    let header = document.getElementById('ces-header');
+                    let items = await getCourseItems()
+                    let newHeader = createHeader(items);
+                    document.body.replaceChild(newHeader, header);
                 } else {
                     console.log('Add failed');
                     event.target.checked = false;
@@ -168,9 +172,13 @@ function tagModuleItem(event) {
                 body: JSON.stringify(body)
             })
             .then((res) => res.json())
-            .then(res => {
+            .then(async res => {
                 if (res.success === true) {
                     console.log('Delete success')
+                    let header = document.getElementById('ces-header');
+                    let items = await getCourseItems()
+                    let newHeader = createHeader(items);
+                    document.body.replaceChild(newHeader, header);
                 } else {
                     console.log('Delete failed');
                     event.target.checked = true;
@@ -210,9 +218,13 @@ function tagAssignment(event) {
                 body: JSON.stringify(body)
             })
             .then((res) => res.json())
-            .then(res => {
+            .then(async res => {
                 if (res.success === true) {
                     console.log('Add success')
+                    let header = document.getElementById('ces-header');
+                    let items = await getCourseItems()
+                    let newHeader = createHeader(items);
+                    document.body.replaceChild(newHeader, header);
                 } else {
                     console.log('Add failed');
                     event.target.checked = false;
@@ -227,9 +239,13 @@ function tagAssignment(event) {
                 body: JSON.stringify(body)
             })
             .then((res) => res.json())
-            .then(res => {
+            .then(async res => {
                 if (res.success === true) {
                     console.log('Delete success')
+                    let header = document.getElementById('ces-header');
+                    let items = await getCourseItems()
+                    let newHeader = createHeader(items);
+                    document.body.replaceChild(newHeader, header);
                 } else {
                     console.log('Delete failed');
                     event.target.checked = true;
@@ -294,6 +310,13 @@ async function addTags(courses) {
     }
 }
 
+function getCourseItems() {
+    return new Promise((resolve, reject)=>{
+        fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
+        .then(result => result.json())
+        .then((courses) => {resolve(courses)})
+    })
+}
 
 
 window.addEventListener("load", function(event) {
@@ -311,14 +334,12 @@ window.addEventListener("load", function(event) {
         document.head.appendChild(font);
         
     })
-    .then(() => {
-        fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
-        .then(result => result.json())
-        .then((courses) => { 
-            console.log(courses);
-            let main_window = document.body;
-            addTags(courses);
-            main_window.prepend(createHeader(courses));
-        })
+    .then(async () => {
+        let courses = await getCourseItems();
+        console.log(courses);
+        let main_window = document.body;
+        addTags(courses);
+        main_window.prepend(createHeader(courses));
+        
     });
 });
