@@ -10,18 +10,26 @@ const password = "thYIMXWbomUy8y7G";
 const dbname = "canvasDocs";
 
 // const uri = process.env.URI;
-const uri = "mongodb+srv://" + username + ":" + password + "@canvasenhancementsuite.amiv0.mongodb.net/" + dbname + "?retryWrites=true&w=majority";
-const client = new MongoClient(uri);
+//const uri = "mongodb+srv://" + username + ":" + password + "@canvasenhancementsuite.amiv0.mongodb.net/" + dbname + "?retryWrites=true&w=majority";
+//const client = new MongoClient(uri, { useNewUrlParser: true });
 // const client = new MongoClient(uri, { useNewUrlParser: true });
 
+const {Connection} = require('./mongo.js');
+
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Headers", "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    next();
+});
 
 app.get('/courses', async function(req, res){
     let userName = req.query.name;
     let userId = req.query.id;
     try {
-        await client.connect();
-        const database = client.db(process.env.DB_NAME);
+
+        const database = Connection.db.db(process.env.DB_NAME);
         const collection = database.collection(process.env.COLLECTION_NAME);
         const query = { user_name: userName, user_id: userId };
         const student = await collection.findOne(query);
@@ -31,9 +39,9 @@ app.get('/courses', async function(req, res){
         } else {
             res.json({});
         }
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+    } catch(err) {
+        console.log(err);
+        res.json({});
     }
 });
 
@@ -42,8 +50,7 @@ app.post('/items/add', async function(req, res) {
     let userName = req.query.name;
     let userId = req.query.id;
     try {
-        await client.connect();
-        const database = client.db(process.env.DB_NAME);
+        const database = Connection.db.db(process.env.DB_NAME);
         const collection = database.collection(process.env.COLLECTION_NAME);
         const query = { user_name: userName, user_id: userId };
         const student = await collection.findOne(query);
@@ -134,9 +141,8 @@ app.post('/items/add', async function(req, res) {
                 }
             });
         }
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+    } catch (err) {
+        console.log(err);
     }
 });
 
@@ -145,8 +151,7 @@ app.delete('/items/delete', async function(req, res) {
     let userId = req.query.id;
     console.log(req.body);
     try {
-        await client.connect();
-        const database = client.db(process.env.DB_NAME);
+        const database = Connection.db.db(process.env.DB_NAME);
         const collection = database.collection(process.env.COLLECTION_NAME);
         // Query for a movie that has the title 'Back to the Future'
         const query = { user: req.params.user };
@@ -182,30 +187,13 @@ app.delete('/items/delete', async function(req, res) {
         } else {
             console.log('Student does not exist and cannot delete item');
         }
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+    } catch(err) {
+        console.log(err);
     }
 });
 
-// async function run() {
-//   try {
-//     await client.connect();
-//     const database = client.db('test');
-//     const collection = database.collection('test_ids');
-//     // Query for a movie that has the title 'Back to the Future'
-//     const query = { id: 5 };
-//     const movie = await collection.findOne(query);
-//     console.log(movie);
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     await client.close();
-//   }
-// }
-
-// run().catch(console.dir);
-
 app.listen(3000, () => {
     console.log('Listening at http://localhost:3000');
+    Connection.connectToMongo();
 });
 

@@ -1,7 +1,7 @@
 //const { userInfo } = require("os");
 var userName = '';
 var userId = '';
-const serverUrl = 'localhost:3000/';
+const serverUrl = 'http://localhost:3000/';
 let types = ['assignments', 'announcements', 'pages'];
 let courses = [
     {
@@ -132,7 +132,7 @@ function tagModuleItem(event) {
     let courseName = getCourseName();
     let courseId = getCourseId();
     let body = {
-        type: type,
+        type: typeToTypes(type),
         itemName: name,
         itemLink: link,
         courseName: courseName,
@@ -190,6 +190,13 @@ function tagAssignment(event) {
     let name = parent.children[0].children[1].children[0].text;
     let courseName = getCourseName();
     let courseId = getCourseId();
+    let body = {
+        type: typeToTypes(type),
+        itemName: name,
+        itemLink: link,
+        courseName: courseName,
+        courseId: courseId
+    }
 
     if(courseName){
         console.log(name + ", " + type + ", " + link);
@@ -234,9 +241,11 @@ function tagAssignment(event) {
     }
 }
 //Will add a tag button to module item cards
-async function addTags() {
+async function addTags(courses) {
     let modItems = await document.getElementsByClassName('ig-row');
     console.log(modItems.length)
+    let courseName = getCourseName();
+    let courseId = getCourseId();
 
     for (var i = 0; i < modItems.length; i++) {
         if(!modItems[i].parentElement.classList.contains('context_module_sub_header')) {
@@ -269,13 +278,13 @@ fetch('https://camino.instructure.com/api/v1/users/self')
         
     })
     .then(() => {
-        /*fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
+        fetch(serverUrl + 'courses/?name=' + userName + '&id=' + userId)
         .then(result => result.json())
-        .then((courses) => { */
+        .then((courses) => { 
             console.log(courses);
             let main_window = document.body;
             main_window.prepend(createHeader(courses));
-        //})
+        })
     });
 
 window.addEventListener("load", function(event) {
