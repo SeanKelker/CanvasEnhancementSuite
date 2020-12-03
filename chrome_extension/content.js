@@ -243,7 +243,6 @@ function tagAssignment(event) {
 //Will add a tag button to module item cards
 async function addTags(courses) {
     let modItems = await document.getElementsByClassName('ig-row');
-    console.log(modItems.length)
     let courseId = getCourseId();
     let course = courses[courses.findIndex(c => c.course_id===courseId)];
     console.log(course);
@@ -259,39 +258,46 @@ async function addTags(courses) {
                 var found = false;
                 if (course) {
                     let items = course[typeToTypes(modItems[i].children[1].title)];
-                    for(var i = 0; i < items.length; i++) {
-                        if (items[i].link === link) {
+                    for(var j = 0; j < items.length; j++) {
+                        if (items[j].link === link) {
                             found = true;
                             break;
                         }
                     }
                 }
-                if (found)
+                if (found) {
                     tagButton.checked = true;
+                }
                 modItems[i].appendChild(tagButton);
             } else if (modItems[i].parentElement.classList.contains('assignment')) {
                 tagButton.onchange = tagAssignment;
-                
-                let link = modItems[i].children[0].href;
+                let link = modItems[i].children[0].children[1].children[0].href;
                 var found = false;
                 if (course) {
                     let items = course['assignments'];
-                    for(var i = 0; i < items.length; i++) {
-                        if (items[i].link === link) {
+                    for(var j = 0; j < items.length; j++) {
+                        if (items[j].link === link) {
                             found = true;
                             break;
                         }
                     }
                 }
-                if (found)
+
+                if (found) {
                     tagButton.checked = true;
+                }
+                
+
                 modItems[i].appendChild(tagButton);
             }
         }
     }
 }
 
-fetch('https://camino.instructure.com/api/v1/users/self')
+
+
+window.addEventListener("load", function(event) {
+    fetch('https://camino.instructure.com/api/v1/users/self')
     .then(result => result.text())
     .then(result => {
         let userInfo = JSON.parse(result.substr(9, result.length));
@@ -315,7 +321,4 @@ fetch('https://camino.instructure.com/api/v1/users/self')
             main_window.prepend(createHeader(courses));
         })
     });
-
-window.addEventListener("load", function(event) {
-    
 });
